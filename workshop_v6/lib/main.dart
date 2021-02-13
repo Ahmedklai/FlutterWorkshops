@@ -35,17 +35,29 @@ class _WkListState extends State<WkList> {
       body: ListView.builder(
           itemCount: (workshopsList != null) ? workshopsList.length : 0,
           itemBuilder: (BuildContext context, int index) {
-            return InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => TrainingScreen(
-                              workshopsList: workshopsList[index],
-                            )),
-                  );
-                },
-                child: ListTile(title: Text((workshopsList[index].name))));
+            return Dismissible(
+              key: Key(workshopsList[index].name),
+              onDismissed: (direction) {
+                String strName = workshopsList[index].name;
+                helper.deleteList(workshopsList[index]);
+                setState(() {
+                  workshopsList.removeAt(index);
+                });
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text("$strName deleted")));
+              },
+              child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => TrainingScreen(
+                                workshopsList: workshopsList[index],
+                              )),
+                    );
+                  },
+                  child: ListTile(title: Text((workshopsList[index].name)))),
+            );
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
